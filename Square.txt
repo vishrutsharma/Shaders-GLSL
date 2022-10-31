@@ -1,0 +1,46 @@
+#version 150
+
+uniform vec2 resolution;
+uniform float size;
+uniform float time;
+
+out vec4 fragColor;
+
+vec4 GetAnimatedColor()
+{
+    float base = 0.5;
+    vec3 freq = vec3(0.2,0.1,0.6);
+    vec3 amplitude = vec3(2,9,1);
+
+    float r = base + abs(amplitude.x * sin(time * freq.x));
+    float g = base + abs(amplitude.y * cos(time * freq.y));
+    float b = base + abs(amplitude.z * sin(time * freq.z));
+    
+    return vec4(fract(r),fract(g),fract(b),1);
+}
+
+float GetAnimatedScale(float dScale)
+{
+    float baseScale = dScale;
+    float amplitude = 0.1;
+    float frequency = 2;
+    
+    return baseScale + abs(amplitude * sin(time* frequency));
+}
+
+void main(void)
+{
+    float scale = size;   
+    scale = 1-scale;
+    scale = GetAnimatedScale(scale);
+    scale = scale/2;
+    
+    vec2 sample = gl_FragCoord.xy/resolution;
+    float left = step(scale,sample.x);
+    float bottom = step(scale,sample.y);
+    float right = 1-step(1-scale,sample.x);
+    float top = 1-step(1-scale,sample.y);
+    
+    fragColor = vec4(vec3(left),1)*  vec4(vec3(bottom),1)*  vec4(vec3(right),1) * vec4(vec3(top),1);
+    fragColor *= GetAnimatedColor();
+}
