@@ -1,0 +1,22 @@
+#version 150
+
+uniform vec2 resolution;
+uniform vec2 dimension;
+uniform vec2 centerPos;
+
+out vec4 fragColor;
+
+void main(void)
+{
+    float width = dimension.x;
+    float height = dimension.y;
+    vec2 uvPixelPos = gl_FragCoord.xy/resolution;
+    
+    float xDiff = abs(centerPos.x - uvPixelPos.x);
+    xDiff = 1-step(width,xDiff);
+    
+    float yDiff = abs(centerPos.y - uvPixelPos.y);
+    yDiff = 1-step(height,yDiff);
+    
+    fragColor = vec4(vec3(xDiff),1) * vec4(vec3(yDiff),1);
+}
