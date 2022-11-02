@@ -1,0 +1,33 @@
+#version 150
+
+uniform float time;
+uniform float speed;
+uniform vec4 color;
+uniform vec2 resolution;
+uniform float frequency;
+uniform float amplitude;
+uniform float lineWidth;
+
+out vec4 fragColor;
+const float PI = 3.1415926535897932384626433832795;
+
+float GetSINSample(float offset,float xPos)
+{
+    float phaseShiftCount = xPos * (frequency* (2*PI));
+    return abs(offset + amplitude*sin(time*speed+phaseShiftCount));
+}
+
+void main(void)
+{
+
+    float yOffset = 0.5;
+    vec2 uvPos = gl_FragCoord.xy/resolution;    
+    
+    float lineUp =  GetSINSample(yOffset,uvPos.x);
+    float lineDown = GetSINSample(yOffset-lineWidth,uvPos.x);
+    lineDown = 1-step(uvPos.y,lineDown);
+    lineUp   = step(uvPos.y,lineUp);
+    
+    fragColor = vec4(vec3(lineUp * lineDown),1)*color;
+    
+}
