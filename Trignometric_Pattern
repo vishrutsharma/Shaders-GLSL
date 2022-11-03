@@ -1,0 +1,41 @@
+#version 150
+
+uniform float time;
+uniform float speed;
+uniform vec2 resolution;
+uniform float frequency;
+uniform float amplitude;
+uniform float lineWidth;
+uniform float scale;
+
+out vec4 fragColor;
+const float PI = 3.1415926535897932384626433832795;
+
+float GetSINSample(float offset,float xPos)
+{
+    float phaseShiftCount = xPos * (frequency* (2*PI));
+    return abs(offset + amplitude*sin(time*speed+phaseShiftCount));
+}
+
+void PolarCoordinates(vec2 UV, vec2 Center,float LengthScale, out vec2 Out) {
+    vec2 delta = UV - Center;
+    float radius = length(delta) * 1.5;
+    float angle = atan(delta.x, delta.y) * 1.0/6.28 * LengthScale;
+    Out = vec2(radius, angle);
+}
+
+void main(void)
+{
+
+    float yOffset = 0.5;
+    vec2 uvPos = gl_FragCoord.xy/resolution;  
+    vec2 Out;
+    PolarCoordinates(uvPos,vec2(0.5,0.5),scale,Out);
+    
+    float lineUp =  GetSINSample(yOffset,Out.y);
+    float lineDown = GetSINSample(yOffset-lineWidth,Out.y);
+    lineDown = step(Out.x,lineDown);
+    lineUp   = step(Out.x,lineUp);
+    fragColor = vec4(vec3(lineUp * lineDown),1);
+    
+}
