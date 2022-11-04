@@ -26,7 +26,6 @@ void PolarCoordinates(vec2 UV, vec2 Center,float LengthScale, out vec2 Out) {
 
 void main(void)
 {
-
     float yOffset = 0.5;
     vec2 uvPos = gl_FragCoord.xy/resolution;  
     vec2 Out;
@@ -36,6 +35,5 @@ void main(void)
     float lineDown = GetSINSample(yOffset-lineWidth,Out.y);
     lineDown = step(Out.x,lineDown);
     lineUp   = step(Out.x,lineUp);
-    fragColor = vec4(vec3(lineUp * lineDown),1);
-    
+    fragColor = vec4(vec3(lineUp * lineDown),1);   
 }
